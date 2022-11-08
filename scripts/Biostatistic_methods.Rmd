@@ -1,0 +1,49 @@
+---
+title: "Biostatistic_methods"
+author: "PotapenkoEugene"
+date: "2022-10-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+
+(0.95*0.8) / ((0.95 * 0.8) + (0.05 * 0.1))
+
+0.8 / ((0.95 * 0.8) + (0.05 * 0.1))
+
+(0.9 * 0.01) + (0.1 * 0.1)
+
+
+(0.9 * 0.01) / 0.019
+```
+
+```{r}
+vec = c(76.22, 65, 19.69, 29.84, 37.18, 70.93, 64.78, 61.66, 49.03, 51.56)
+var(vec)
+sd(vec)
+IQR(vec)
+(se = sd(vec)/sqrt(length(vec)))
+```
+
+
+
+```{r}
+library(psych)
+
+df = read_rds('https://stepik.org/media/attachments/lesson/790859/numeric_data.rds')
+describe(df,na.rm = T)
+```
+
+```{r}
+library(stringr)
+library(dplyr)
+data = read_tsv('https://stepik.org/media/attachments/lesson/790863/data_tsv.tsv')
+
+data %>% mutate(across(!contains("E1") & !c(`Группа`, `Возраст`) & !where(is.factor), function(x) x ^ 2), across(contains("E2"), function(x) x * 100))
+data %>% mutate(across(!contains("E1") & !c(`Группа`, `Возраст`), function(x) x ^ 2))
+data %>% mutate(across(!contains("E1"), function(x) str_c(x, " + некая строка")))
+data %>% mutate(across(function(x) any(near(x, 0.5, tol = 0.1)), function(x) x + 1000)) 
+```

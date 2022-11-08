@@ -1,0 +1,70 @@
+---
+title: "Automatization_Report"
+author: "PotapenkoEugene"
+date: "2022-11-08"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=F, message=F, echo=F}
+knitr::opts_chunk$set(echo = F)
+# Load libs
+if(!require('tidyverse')) install.packages('tidyverse') ; library(tidyverse)
+if(!require('psych')) install.packages('psych') ; library(psych)
+if(!require('flextable')) install.packages('flextable') ; library(flextable)
+### Functions
+# 1
+numeric_summary_by_group <- function(df, var, value, categorival_vars){
+  df %>%
+    dplyr::filter(!!as.name(var) == !!value) %>%
+    dplyr::select(-Группа, -categorival_vars) %>%
+    describe(na.rm = T, skew = F) %>%
+    dplyr::select(-vars) %>%
+    add_rownames('Name')
+}
+```
+
+# Load data
+```{r echo=F}
+data <-
+  readxl::read_xlsx('../data/data_excel.xlsx') %>%
+  dplyr::mutate_at(vars(ends_with(paste0("_E", seq(0, 100)))), function(x) as.numeric(gsub(',', '.', x)))
+str(data)
+```
+
+# Generate statistics summary for all variables
+
+## Группа 1 
+```{r echo=F, warning=F}
+# Set cat vars and group
+cat_vars = c('Пол', 'Группа крови')
+groupnum = 'Группа 1'
+# Categorical table
+data %>%
+  dplyr::filter(Группа == groupnum) %>%
+  dplyr::select(cat_vars) %>%
+  table
+# Numerics stat table
+numeric_summary_by_group(data, 'Группа', groupnum, cat_vars) %>% 
+  flextable %>%
+  colformat_double(digits = 2)
+
+```
+
+## Группа 2
+```{r echo=F, warning=F}
+# Set cat vars and group
+cat_vars = c('Пол', 'Группа крови')
+groupnum = 'Группа 1'
+# Categorical table
+data %>%
+  dplyr::filter(Группа == groupnum) %>%
+  dplyr::select(cat_vars) %>%
+  table
+# Numerics stat table
+numeric_summary_by_group(data, 'Группа', groupnum, cat_vars) %>% 
+  flextable %>% 
+  colformat_double(digits = 2)
+```
+
